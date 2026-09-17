@@ -1,0 +1,32 @@
+{
+  "name": "portal_de_projetos",
+  "version": "1.0.0",
+  "description": "plataforma Portal de Projetos",
+  "keywords": [
+    "nodejs",
+    "express",
+    "mysql",
+    "api",
+    "projetos"
+  ],
+  "homepage": "https://github.com/viniciusL1001/portal_de_projetos#readme",
+  "bugs": {
+    "url": "https://github.com/viniciusL1001/portal_de_projetos/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/viniciusL1001/portal_de_projetos.git"
+  },
+  "author": "Vinicius Lima",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
