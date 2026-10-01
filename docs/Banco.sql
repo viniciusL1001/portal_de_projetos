@@ -5,10 +5,7 @@ USE `portal_de_projetos`;
 
 DROP TABLE IF EXISTS `Usuario`;
 DROP TABLE IF EXISTS `Projeto`;
-DROP TABLE IF EXISTS `Categoria`;
 DROP TABLE IF EXISTS `Comentario`;
-DROP TABLE IF EXISTS `Avaliacao`;
-DROP TABLE IF EXISTS `Tecnologia`;
 
 CREATE TABLE IF NOT EXISTS `Usuario`(
     `idUsuario` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -21,13 +18,6 @@ CREATE TABLE IF NOT EXISTS `Usuario`(
     UNIQUE INDEX `email_UNIQUE` (`email` ASC)
 ) ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `Categoria`(
-    `idCategoria` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `nomeCategoria` VARCHAR(64) NOT NULL,
-
-    PRIMARY KEY(`idCategoria`),
-    UNIQUE INDEX `nomeCategoria_UNIQUE` (`nomeCategoria` ASC)
-) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `Projeto`(
     `idProjeto` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -50,6 +40,7 @@ CREATE TABLE IF NOT EXISTS `Comentario`(
     `idComentario` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `idProjeto` INT UNSIGNED NOT NULL,
     `idUsuario` INT UNSIGNED NOT NULL,
+    `nota` INT NULL,
     `texto` VARCHAR(500) NOT NULL,
     `dataComentario` DATE NOT NULL,
 
@@ -57,18 +48,7 @@ CREATE TABLE IF NOT EXISTS `Comentario`(
     INDEX `fk_Comentario_Projeto_idx` (`idProjeto`),
     FOREIGN KEY (`idProjeto`) REFERENCES `Projeto` (`idProjeto`),
     INDEX `fk_Comentario_Usuario_idx` (`idUsuario`),
-    FOREIGN KEY (`idUsuario`) REFERENCES `Usuario` (`idUsuario`)
-) ENGINE = InnoDB;
+    FOREIGN KEY (`idUsuario`) REFERENCES `Usuario` (`idUsuario`),
 
-CREATE TABLE IF NOT EXISTS `Avaliacao`(
-    `idAvaliacao` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `idProjeto` INT UNSIGNED NOT NULL,
-    `idUsuario` INT UNSIGNED NOT NULL,
-    `nota` INT UNSIGNED NOT NULL CHECK (`nota` BETWEEN 1 AND 5),
-
-    PRIMARY KEY(`idAvaliacao`),
-    INDEX `fk_Avaliacao_Projeto_idx` (`idProjeto`),
-    FOREIGN KEY (`idProjeto`) REFERENCES `Projeto` (`idProjeto`),
-    INDEX `fk_Avaliacao_Usuario_idx` (`idUsuario`),
-    FOREIGN KEY (`idUsuario`) REFERENCES `Usuario` (`idUsuario`)
+    CHECK(`nota` BETWEEN 1 AND 2)
 ) ENGINE = InnoDB;
