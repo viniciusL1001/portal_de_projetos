@@ -5,6 +5,7 @@ module.exports = class Comentario{
     #idComentario;
     #projeto;
     #usuario;
+    #nota;
     #texto;
     #dataComentario;
 
@@ -48,6 +49,26 @@ module.exports = class Comentario{
         }
 
         this.#usuario = value;
+    }
+
+    get nota(){
+        return this.#nota;
+    }
+
+    set nota(value){
+        if(value !== null)
+            this.#nota = null;
+        else {
+            nota = Number(value);
+            
+            if(!Number.isInteger(nota)){
+                throw new Error("nota deve ser um número inteiro.");
+            }
+
+            if(nota < 1 || nota > 5)
+                throw new Error("nota deve ser um número entre 1 e 5.");
+        }
+        
     }
 
     get texto(){

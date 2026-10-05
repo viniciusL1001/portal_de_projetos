@@ -4,7 +4,6 @@ const Usuario = require("./Usuario");
 module.exports = class Projeto{
     #idProjeto;
     #usuario;
-    #categoria;
     #titulo;
     #descricao;
     #dataCriacao;
@@ -39,19 +38,7 @@ module.exports = class Projeto{
         }
 
         this.#usuario = value;
-    }
-
-    get categoria(){
-        return this.#categoria;
-    }
-
-    set categoria(value){
-        if(!(value instanceof Categoria)){
-            throw new Error("categoria deve ser uma instancia valida de Categoria.");
-        }
-
-        this.#categoria = value;
-    }
+    }   
 
     get titulo(){
         return this.#titulo;
