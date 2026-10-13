@@ -1,28 +1,27 @@
-const bcypt = require("bcrypt");
+const bcrypt = require("bcrypt");
 const Usuario = require("../models/Usuario");
-const MysqlDataBase = require("../database/MysqlDatabase");
 
 module.exports = class UsuarioDAO {
     #database;
 
     constructor(databaseInstance){
-        console.log(" UsuarioDAO.constructor()")
+        console.log("UsuarioDAO.constructor()")
         this.#database = databaseInstance;
     }
 
     create = async (objUsuario) => {
         objUsuario.senha = await bcrypt.hash(objUsuario.senha, 12);
 
-        const sql = "INSERT INTO usuario (nomeUsuario, email, senha) VALUES (?, ?, ?);";
+        const SQL = "INSERT INTO usuario (nomeUsuario, email, senha) VALUES (?, ?, ?);";
 
-        const param = [
+        const params = [
             objUsuario.nomeUsuario,
             objUsuario.email,
             objUsuario.senha
         ];
 
         const pool = await this.#database.getPool();
-        const [resultado] = await pool.execute(sql, params);
+        const [resultado] = await pool.execute(SQL, params);
 
         if (!resultado.insertId) {
             throw new Error("Falha ao inserir usuario");
@@ -32,26 +31,28 @@ module.exports = class UsuarioDAO {
     };
 
     update = async (objUsuario) => {
-        let sql;
+        let SQL;
         let params;
 
         if (objUsuario.senha) {
             const senhaHash = await bcrypt.hash(objUsuario.senha, 12);
         
 
-            sql = "UPDATE usuario SET nomeUsuario = ?, email = ?, senha = ? WHERE idUsuario = ?;";
+            SQL = "UPDATE usuario SET nomeUsuario = ?, email = ?, senha = ? WHERE idUsuario = ?;";
 
             params = [
                 objUsuario.nomeUsuario,
                 objUsuario.email,
-                senhaHash
+                senhaHash,
+                objUsuario.idUsuario
             ];
         } else {
-            sql = "UPDATE usuario SET nomeUsuario = ?, email = ? WHERE idUsuario = ?;";
+            SQL = "UPDATE usuario SET nomeUsuario = ?, email = ? WHERE idUsuario = ?;";
 
             params = [
             objUsuario.nomeUsuario,
             objUsuario.email,
+            objUsuario.idUsuario
             ];
         }
 
@@ -62,23 +63,23 @@ module.exports = class UsuarioDAO {
     };
 
     delete = async (objUsuario) => {
-        const sql = "DELETE FROM usuario WHERE idUsuario = ?;";
+        const SQL = "DELETE FROM usuario WHERE idUsuario = ?;";
 
-        param = [
+        const param = [
             objUsuario.idUsuario
         ];
 
         const pool = await this.#database.getPool();
-        const [resultado] = await pool.execute(sql, params);
+        const [resultado] = await pool.execute(SQL, param);
 
         return resultado.affectedRows > 0;
     };
 
     findAll = async () => {
-        const sql = "SELECT * FROM usuario;";
+        const SQL = "SELECT idUsuario, nomeUsuario, email FROM usuario;";
 
         const pool = await this.#database.getPool();
-        const [matrizResultado] = await pool.execute(sql, params);
+        const [matrizResultado] = await pool.execute(SQL);
         
         return matrizResultado.map(row => ({
             idUsuario: row.idUsuario,
@@ -87,30 +88,30 @@ module.exports = class UsuarioDAO {
         }));
     };
 
-    findByField = async(idUsuario) => {
-        const sql = "SELECT * FROM usuario WHERE idUsuario = ?;";
+    findById = async(idUsuario) => {
+        const SQL = "SELECT idUsuario, nomeUsuario, email FROM usuario WHERE idUsuario = ?;";
 
         const pool = await this.#database.getPool();
-        const [resultado] = await pool.execute(sql, [idUsuario]);
+        const [resultado] = await pool.execute(SQL, [idUsuario]);
 
         return resultado[0];
     };
 
     login = async (objUsuario) => {
 
-        const sql = "SELECT * FROM usuario WHERE email = ?;";
+        const SQL = "SELECT * FROM usuario WHERE email = ?;";
 
         const pool = await this.#database.getPool();
-        const [resultado] = await pool.execute(sql, [objUsuario.email]);
+        const [resultado] = await pool.execute(SQL, [objUsuario.email]);
 
-        if (resultado.lenght !== 1) {
+        if (resultado.length !== 1) {
             console.log("USUÁRIO NÃO ENCONTRADO");
             return null;
         }
 
         const usuarioDB = resultado[0];
 
-        const senhaValida = await bcrypt.compara(objUsuario.senha, usuarioDB.senha);
+        const senhaValida = await bcrypt.compare(objUsuario.senha, usuarioDB.senha);
         if (!senhaValida) {
             console.log("SENHA INVÁLIDA");
             return null;

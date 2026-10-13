@@ -14,13 +14,21 @@ module.exports = class Comentario{
     }
 
     set idComentario(value){
+        if (value === null || 
+            value === undefined || 
+            typeof value === "boolean" || 
+            (typeof value === "string" && value.trim() === "")
+        ) {
+            throw new Error("idComentario deve ser um número inteiro.");
+        }
+
         const id = Number(value);
         
         if(!Number.isInteger(id)){
             throw new Error("idComentario deve ser um número inteiro.");
         }
 
-        if(id < 0){
+        if(id <= 0){
             throw new Error("idComentario não pode ser negativo.");
         }
 
@@ -56,10 +64,17 @@ module.exports = class Comentario{
     }
 
     set nota(value){
-        if(value !== null)
+        if(value === null)
             this.#nota = null;
         else {
-            nota = Number(value);
+            if (value === undefined || 
+                typeof value == "boolean" || 
+                (typeof value === "string" && value.trim() === "")
+                ) {
+                throw new Error("nota deve ser um número inteiro.");
+            }
+
+            const nota = Number(value);
             
             if(!Number.isInteger(nota)){
                 throw new Error("nota deve ser um número inteiro.");
@@ -67,8 +82,9 @@ module.exports = class Comentario{
 
             if(nota < 1 || nota > 5)
                 throw new Error("nota deve ser um número entre 1 e 5.");
+
+            this.#nota = nota;
         }
-        
     }
 
     get texto(){
@@ -76,14 +92,18 @@ module.exports = class Comentario{
     }
 
     set texto(value){
-        if(typeof value !== "string"){
+        if (typeof value !== "string") {
             throw new Error("texto deve ser uma string.");
         }
 
         const texto = value.trim();
 
-        if(texto === ""){
+        if (texto === "") {
             throw new Error("texto não pode estar vazio.");
+        }
+
+        if(texto > 1000) {
+            throw new Error("texto não pode ter mais de 1000 caracteres.");
         }
 
         this.#texto = texto;
@@ -94,7 +114,11 @@ module.exports = class Comentario{
     }
 
     set dataComentario(value){
-        const data = new Date(value);
+        if (value === null || value === undefined || typeof value === "boolean") {
+            throw new Error("dataComentario deve ser uma data válida.")
+        }
+
+        const data = value instanceof Date ? new Date(value.getTime()) : new Date(value);
 
         if(isNaN(data.getTime())){
             throw new Error("dataComentario deve ser uma data válida.");
