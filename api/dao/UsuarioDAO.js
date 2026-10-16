@@ -65,9 +65,7 @@ module.exports = class UsuarioDAO {
     delete = async (objUsuario) => {
         const SQL = "DELETE FROM usuario WHERE idUsuario = ?;";
 
-        const param = [
-            objUsuario.idUsuario
-        ];
+        const param = [objUsuario.idUsuario];
 
         const pool = await this.#database.getPool();
         const [resultado] = await pool.execute(SQL, param);
@@ -96,6 +94,15 @@ module.exports = class UsuarioDAO {
 
         return resultado[0];
     };
+
+    findByEmail = async (email) => {
+        const SQL = "SELECT idUsuario FROM usuario WHERE email = ?;";
+
+        const pool = await this.#database.getPool();
+        const [resultado] = await pool.execute(SQL, [email])
+
+        return resultado.length > 0;
+    }
 
     login = async (objUsuario) => {
 

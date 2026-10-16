@@ -22,7 +22,6 @@ CREATE TABLE IF NOT EXISTS `Usuario`(
 CREATE TABLE IF NOT EXISTS `Projeto`(
     `idProjeto` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `idUsuario` INT UNSIGNED NOT NULL,
-    `idCategoria` INT UNSIGNED NOT NULL,
     `titulo` VARCHAR(100) NOT NULL,
     `descricao` TEXT NULL,
     `dataCriacao` DATE NOT NULL,
