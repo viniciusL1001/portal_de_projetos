@@ -38,7 +38,7 @@ module.exports = class MysqlDatabase {
             });
 
             try {
-                const connection = await MysqlDatabase.#pool.getConneciton();
+                const connection = await MysqlDatabase.#pool.getConnection();
                 console.log("Conectado ao MySQL com sucesso.");
                 connection.release();
             } catch (error) {
