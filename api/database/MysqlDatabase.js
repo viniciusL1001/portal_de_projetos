@@ -9,7 +9,7 @@ module.exports = class MysqlDatabase {
     #password;
     #database;
     #port;
-    #waitForConnection;
+    #waitForConnections;
     #connectionLimit;
     #queueLimit;
 
@@ -19,7 +19,7 @@ module.exports = class MysqlDatabase {
         this.#password = config.password ?? process.env.DB_PASSWORD ?? "";
         this.#database = config.database || "portal_de_projetos";
         this.#port = config.port || 3306;
-        this.#waitForConnection = config.waitForConnection ?? true;
+        this.#waitForConnections = config.waitForConnections ?? true;
         this.#connectionLimit = config.connectionLimit || 10;
         this.#queueLimit = config.queueLimit || 10;
     }
@@ -32,7 +32,7 @@ module.exports = class MysqlDatabase {
                 password: this.#password,
                 database: this.#database,
                 port: this.#port,
-                waitForConnection: this.#waitForConnection,
+                waitForConnections: this.#waitForConnections,
                 connectionLimit: this.#connectionLimit,
                 queueLimit: this.#queueLimit
             });

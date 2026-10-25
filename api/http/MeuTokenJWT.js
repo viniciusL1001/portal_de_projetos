@@ -64,7 +64,7 @@ module.exports = class MeuTokenJWT {
 
         try {
             const decoded = jwt.verify(token, this.#key, {
-                algortihms: [this.#alg],
+                algorithms: [this.#alg],
             });
             this.#payload = decoded;
             return true;

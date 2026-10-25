@@ -9,14 +9,14 @@ module.exports = class Logger {
     }
 
     static log(error) {
-        this.writeLog("error", JSON.stringfy(error));
+        this.writeLog("error", JSON.stringify(error));
     }
 
     static writeLog(type, message) {
         const directoryPath = path.dirname(this.LOG_FILE);
 
         if (!fs.existsSync(directoryPath)) {
-            fs.mkdirsync(directoryPath, { recursive: true });
+            fs.mkdirSync(directoryPath, { recursive: true });
         }
 
         const dateTime = new Date().toISOString();

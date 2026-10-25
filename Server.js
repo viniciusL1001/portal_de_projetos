@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
-const ErrorReponse = require("./api/utils/ErrorResponse");
+const ErrorResponse = require("./api/utils/ErrorResponse");
 const Logger = require("./api/utils/Logger");
 
 const JwtMiddleware = require("./api/middleware/JwtMiddleware");
