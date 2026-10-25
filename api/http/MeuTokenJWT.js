@@ -13,7 +13,7 @@ module.exports = class MeuTokenJWT {
     #payload;
 
     constructor() {
-        this.#key = process.key.JWT_SECRET;
+        this.#key = process.env.JWT_SECRET;
         this.#alg = "HS256";
         this.#type = "JWT";
         this.#iss = "http://localhost";
@@ -39,7 +39,7 @@ module.exports = class MeuTokenJWT {
             jti: crypto.randomBytes(16).toString("hex"),
 
             email: claims.email,
-            role: claims.name,
+            name: claims.name,
             idUsuario: claims.idUsuario
         };
 
@@ -64,7 +64,7 @@ module.exports = class MeuTokenJWT {
 
         try {
             const decoded = jwt.verify(token, this.#key, {
-                algortihm: [this.#alg],
+                algortihms: [this.#alg],
             });
             this.#payload = decoded;
             return true;

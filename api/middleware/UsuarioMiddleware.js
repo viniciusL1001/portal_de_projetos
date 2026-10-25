@@ -56,7 +56,7 @@ module.exports = class UsuarioMiddleware {
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.text(usuario.email)) {
+        if (!emailRegex.test(usuario.email)) {
             throw new ErrorResponse(
                 400,
                 "Erro na validação de dados.",

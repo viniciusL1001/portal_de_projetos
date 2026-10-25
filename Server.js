@@ -55,7 +55,7 @@ module.exports = class Server {
             database: "portal_de_projetos"
         });
 
-        this.#database.connect();
+        await this.#database.connect();
 
         this.beforeRouting();
         this.setupUsuario();
@@ -74,8 +74,8 @@ module.exports = class Server {
         this.#usuarioRouter = new UsuarioRouter(
             this.#router,
             this.#jwtMiddleware,
-            this.usuarioMiddleware,
-            this.usuarioController
+            this.#usuarioMiddleware,
+            this.#usuarioController
         );
 
         this.#app.use("/api/usuarios", this.#usuarioRouter.createRouter());
@@ -106,7 +106,7 @@ module.exports = class Server {
             };
             console.error("ERRO CAPTURADO: ", resposta);
             Logger.log(resposta);
-            resposta.status(500).json(resposta);
+            response.status(500).json(resposta);
         });
     };
 

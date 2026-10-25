@@ -1,4 +1,4 @@
-const MeuTokenJwt = require("../http/MeuTokenJWT");
+const MeuTokenJWT = require("../http/MeuTokenJWT");
 
 module.exports = class JwtMiddleware {
     validateToken = (request, response, next) => {

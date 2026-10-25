@@ -45,7 +45,7 @@ module.exports = class UsuarioController {
     destroy = async (request, response, next) => {
         try {
             const idUsuario = request.params.idUsuario;
-            const excluiu = await this.#usuarioService.deleteUsuario(idUsuario);
+            const excluiu = await this.#usuarioService.deleteService(idUsuario);
 
             if (!excluiu) {
                 return response.status(404).json({
@@ -55,7 +55,7 @@ module.exports = class UsuarioController {
                 });
             }
 
-            response.status(204).json({
+            response.status(200).json({
                 success: true,
                 message: "Excluído com sucesso."
             });
@@ -96,7 +96,7 @@ module.exports = class UsuarioController {
     login = async (request, response, next) => {
         try {
             const jsonUsuario = request.body.usuario;
-            const resultado = await this.#usuarioService.loginUsuario(jsonUsuario);
+            const resultado = await this.#usuarioService.loginService(jsonUsuario);
 
             response.status(200).json({
                 success: true,
