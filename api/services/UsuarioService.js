@@ -1,6 +1,7 @@
 const UsuarioDAO = require("../dao/UsuarioDAO");
 const Usuario = require("../models/Usuario");
 const ErrorResponse = require("../utils/ErrorResponse");
+const MeuTokenJWT = require("../http/MeuTokenJWT");
 
 module.exports = class UsuarioService {
     #usuarioDAO;
@@ -22,7 +23,7 @@ module.exports = class UsuarioService {
             throw new ErrorResponse(
                 400,
                 "Já existe um Usuario com o email fornecido",
-                { message: `O email ${usuario.email} já está cadastrado`}
+                { message: `O email ${jsonUsuario.email} já está cadastrado`}
             );
         }
 
@@ -50,12 +51,12 @@ module.exports = class UsuarioService {
         return await this.#usuarioDAO.delete(objUsuario);
     }
 
-    findAll = async () => {
+    findAllService = async () => {
         return this.#usuarioDAO.findAll();
     }
 
-    findById = async (idUsuario) => {
-        const objUsuario = Usuario();
+    findByIdService = async (idUsuario) => {
+        const objUsuario = new Usuario();
 
         objUsuario.idUsuario = idUsuario;
 
@@ -72,7 +73,7 @@ module.exports = class UsuarioService {
         return usuario;
     }
 
-    loginUsuario = async (jsonUsuario) => {
+    loginService = async (jsonUsuario) => {
         const objUsuario = new Usuario();
         objUsuario.email = jsonUsuario.email;
         objUsuario.senha = jsonUsuario.senha;

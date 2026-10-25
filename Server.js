@@ -60,7 +60,7 @@ module.exports = class Server {
         this.beforeRouting();
         this.setupUsuario();
         this.setupErrorMiddleware();
-    }
+    };
 
     setupUsuario = () => {
         this.#usuarioMiddleware = new UsuarioMiddleware();
@@ -79,5 +79,40 @@ module.exports = class Server {
         );
 
         this.#app.use("/api/usuarios", this.#usuarioRouter.createRouter());
-    }
+    };
+
+    beforeRouting = () => {
+        this.#app.use((req, res, next) => {
+            console.log("------------------------------------------------------------------");
+            next();
+        });
+    };
+
+    setupErrorMiddleware = () => {
+        this.#app.use((error, request, response, next) => {
+            if (error instanceof ErrorResponse) {
+                return response.status(error.httpCode).json({
+                    success: false,
+                    message: error.message,
+                    error: error.error
+                });
+            }
+
+            const resposta = {
+                success: false,
+                message: "Ocorreu um erro interno no servidor",
+                data: { stack: error.stack },
+                error: { message: error.message || "Erro interno", code: error.code }
+            };
+            console.error("ERRO CAPTURADO: ", resposta);
+            Logger.log(resposta);
+            resposta.status(500).json(resposta);
+        });
+    };
+
+    run = () => {
+        this.#app.listen(this.#porta, () => {
+            console.log(`Server rodando em http://localhost:${this.#porta}/Login.html`);
+        });
+    };
 }

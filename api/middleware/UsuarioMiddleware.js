@@ -56,7 +56,7 @@ module.exports = class UsuarioMiddleware {
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.text(funcionario.email)) {
+        if (!emailRegex.text(usuario.email)) {
             throw new ErrorResponse(
                 400,
                 "Erro na validação de dados.",
@@ -72,7 +72,7 @@ module.exports = class UsuarioMiddleware {
         const { idUsuario } = request.params;
 
         if (!idUsuario) {
-            throw new ErrorRepsonse(
+            throw new ErrorResponse(
                 400,
                 "Erro na validação de dados.",
                 { message: "O parâmetro 'idUsuario' é obrigatório." }

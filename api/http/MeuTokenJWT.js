@@ -13,7 +13,7 @@ module.exports = class MeuTokenJWT {
     #payload;
 
     constructor() {
-        this.#key = process.key.DB_PASSWORD;
+        this.#key = process.key.JWT_SECRET;
         this.#alg = "HS256";
         this.#type = "JWT";
         this.#iss = "http://localhost";

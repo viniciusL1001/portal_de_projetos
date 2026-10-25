@@ -6,9 +6,9 @@ module.exports = class UsuarioRouter {
     #usuarioMiddleware;
     #jwtMiddleware;
 
-    constructor(jwtMiddleware, usuarioMiddleware, usuarioController) {
+    constructor(router, jwtMiddleware, usuarioMiddleware, usuarioController) {
         console.log("UsuarioDAO.constructor()");
-        this.#router = express.Router();
+        this.#router = router
 
         this.#jwtMiddleware = jwtMiddleware;
         this.#usuarioMiddleware = usuarioMiddleware;
