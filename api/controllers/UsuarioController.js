@@ -1,5 +1,3 @@
-const UsuarioService = require("../services/UsuarioService");
-
 module.exports = class UsuarioController {
     #usuarioService;
 

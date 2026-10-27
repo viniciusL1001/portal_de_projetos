@@ -1,5 +1,3 @@
-const express = require("express");
-
 module.exports = class UsuarioRouter {
     #router;
     #usuarioController;
@@ -7,15 +5,14 @@ module.exports = class UsuarioRouter {
     #jwtMiddleware;
 
     constructor(router, jwtMiddleware, usuarioMiddleware, usuarioController) {
-        console.log("UsuarioDAO.constructor()");
-        this.#router = router
-
+        console.log("UsuarioRouter.constructor()");
+        this.#router = router;
         this.#jwtMiddleware = jwtMiddleware;
         this.#usuarioMiddleware = usuarioMiddleware;
         this.#usuarioController = usuarioController;
     }
 
-    createRouter = () => {
+    createRoutes = () => {
         this.#router.post("/",
             this.#jwtMiddleware.validateToken,
             this.#usuarioMiddleware.validateBody,

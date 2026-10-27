@@ -78,7 +78,7 @@ module.exports = class Server {
             this.#usuarioController
         );
 
-        this.#app.use("/api/usuarios", this.#usuarioRouter.createRouter());
+        this.#app.use("/api/usuarios", this.#usuarioRouter.createRoutes());
     };
 
     beforeRouting = () => {
