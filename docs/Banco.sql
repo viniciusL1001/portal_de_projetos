@@ -26,13 +26,11 @@ CREATE TABLE IF NOT EXISTS `Projeto`(
     `descricao` TEXT NULL,
     `dataCriacao` DATE NOT NULL,
     `imagem` VARCHAR(255) NULL, 
-    `linkGitHub` VARCHAR(255) NULL,
+    `linkGitHub` VARCHAR(255) NOT NULL,
 
     PRIMARY KEY(`idProjeto`),
     INDEX `fk_Projeto_Usuario_idx` (`idUsuario`),
-    FOREIGN KEY (`idUsuario`) REFERENCES `Usuario` (`idUsuario`),
-    INDEX `fk_Projeto_Categoria_idx` (`idCategoria`),
-    FOREIGN KEY (`idCategoria`) REFERENCES `Categoria` (`idCategoria`)
+    FOREIGN KEY (`idUsuario`) REFERENCES `Usuario` (`idUsuario`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `Comentario`(
@@ -49,5 +47,5 @@ CREATE TABLE IF NOT EXISTS `Comentario`(
     INDEX `fk_Comentario_Usuario_idx` (`idUsuario`),
     FOREIGN KEY (`idUsuario`) REFERENCES `Usuario` (`idUsuario`),
 
-    CHECK(`nota` BETWEEN 1 AND 2)
+    CHECK(`nota` BETWEEN 1 AND 5)
 ) ENGINE = InnoDB;

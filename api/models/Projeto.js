@@ -108,18 +108,18 @@ module.exports = class Projeto{
     }
 
     set imagem(value){
-        if(value !== null){
-            if(typeof value !== "string"){
-                throw new Error("imagem deve ser uma string.");
+        if (value != undefined && value !== null && value !== "") {
+            if (typeof value !== "string" ||
+                value.length > 255 ||
+                !/\.(png|jpe?g|webp|gif)$/i.test(value)
+            ) {
+                throw new ErrorResponse(
+                    400,
+                    "Erro na validação de dados.",
+                    { message: "O campo 'imagem' deve ser uma string de até 255 caracteres com um formato de imagem válido." }
+                );
             }
-
-            const imagem = value.trim();
-
-            if(imagem === ""){
-                throw new Error("imagem não pode ser vazia.");
-            }
-        
-            this.#imagem = imagem;
+            this.#imagem = value;
         } else {
             this.#imagem = null;
         }

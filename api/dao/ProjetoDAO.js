@@ -49,7 +49,7 @@ module.exports = class ProjetoDAO {
         const pool = await this.#database.getPool();
         const [resultado] = await pool.execute(SQL, params);
 
-        return [resultado].affectedRows > 0;
+        return resultado.affectedRows > 0;
     }
 
     delete = async (objProjeto) => {
