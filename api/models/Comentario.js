@@ -102,7 +102,7 @@ module.exports = class Comentario{
             throw new Error("texto não pode estar vazio.");
         }
 
-        if(texto > 1000) {
+        if(texto.length > 1000) {
             throw new Error("texto não pode ter mais de 1000 caracteres.");
         }
 

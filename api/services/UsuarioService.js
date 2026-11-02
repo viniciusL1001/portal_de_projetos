@@ -66,7 +66,7 @@ module.exports = class UsuarioService {
             throw new ErrorResponse(
                 400,
                 "Usuario não encontrado",
-                { message: `Não um funcionario com id ${idUsuario}`}
+                { message: `Não há um usuario com id ${idUsuario}`}
             );
         }
 

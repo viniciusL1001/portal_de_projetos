@@ -8,14 +8,24 @@ const Logger = require("./api/utils/Logger");
 const JwtMiddleware = require("./api/middleware/JwtMiddleware");
 
 const UsuarioRouter = require("./api/routes/UsuarioRouter");
+const ProjetoRouter = require("./api/routes/ProjetoRouter");
+const ComentarioRouter = require("./api/routes/ComentarioRouter");
 
 const UsuarioMiddleware = require("./api/middleware/UsuarioMiddleware");
+const ProjetoMiddleware = require("./api/middleware/ProjetoMiddleware");
+const ComentarioMiddleware = require("./api/middleware/ComentarioMiddleware");
 
 const UsuarioController = require("./api/controllers/UsuarioController");
+const ProjetoController = require("./api/controllers/ProjetoController");
+const ComentarioController = require("./api/controllers/ComentarioController");
 
 const UsuarioService = require("./api/services/UsuarioService");
+const ProjetoService = require("./api/services/ProjetoService");
+const ComentarioService = require("./api/services/ComentarioService");
 
 const UsuarioDAO = require("./api/dao/UsuarioDAO");
+const ProjetoDAO = require("./api/dao/ProjetoDAO");
+const ComentarioDAO = require("./api/dao/ComentarioDAO");
 
 const MysqlDatabase = require("./api/database/MysqlDatabase");
 
@@ -29,10 +39,24 @@ module.exports = class Server {
     #jwtMiddleware;
 
     #usuarioRouter;
+    #projetoRouter;
+    #comentarioRouter;
+
     #usuarioMiddleware;
+    #projetoMiddleware;
+    #comentarioMiddleware;
+
     #usuarioController;
+    #projetoController;
+    #comentarioController;
+
     #usuarioService;
+    #projetoService;
+    #comentarioService;
+    
     #usuarioDAO;
+    #projetoDAO;
+    #comentarioDAO;
 
     constructor(porta) {
         this.#porta = porta ?? 8000;
@@ -80,6 +104,42 @@ module.exports = class Server {
 
         this.#app.use("/api/usuarios", this.#usuarioRouter.createRoutes());
     };
+
+    setupProjeto = () => {
+        this.#projetoMiddleware = new ProjetoMiddleware();
+
+        this.#projetoDAO = new ProjetoDAO(this.#database);
+
+        this.#projetoService = new ProjetoService(this.#projetoDAO, this.#usuarioDAO);
+
+        this.#projetoController = new ProjetoController(this.#projetoService);
+
+        this.#projetoRouter = new ProjetoRouter(
+            this.#router,
+            this.#projetoMiddleware,
+            this.#projetoController
+        );
+
+        this.#app.use("/api/projetos", this.#projetoRouter.createRoutes());
+    };
+
+    setupComentario = () => {
+        this.#comentarioMiddleware = new ComentarioMiddleware();
+
+        this.#comentarioDAO = new ProjetoDAO(this.#database);
+
+        this.#comentarioService = new ProjetoService(this.#comentarioDAO, this.#usuarioDAO, this.#projetoDAO);
+
+        this.#comentarioController = new ProjetoController(this.#comentarioService);
+
+        this.#comentarioRouter = new ProjetoRouter(
+            this.#router,
+            this.#comentarioMiddleware,
+            this.#comentarioController
+        );
+
+        this.#app.use("/api/comentarios", this.#comentarioRouter.createRoutes());
+    }
 
     beforeRouting = () => {
         this.#app.use((req, res, next) => {

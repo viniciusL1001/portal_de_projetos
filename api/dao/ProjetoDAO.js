@@ -1,6 +1,3 @@
-const Projeto = require("../models/Projeto");
-const Usuario = require("../models/Usuario");
-
 module.exports = class ProjetoDAO {
     #database;
 

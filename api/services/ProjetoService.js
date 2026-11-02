@@ -22,9 +22,18 @@ module.exports = class ProjetService {
         objProjeto.usuario = objUsuario;
         objProjeto.titulo = jsonProjeto.titulo;
         objProjeto.descricao = jsonProjeto.descricao;
-        objProjeto.dataCricao = data.toLocaleDateString('pt-BR');
+        objProjeto.dataCricao = new Date();
         objProjeto.imagem = jsonProjeto.imagem;
         objProjeto.linkGitHub = jsonProjeto.linkGithub;
+
+        const usuarioExiste = await this.#usuarioDAO.findById(objProjeto.usuario.idUsuario);
+        if (!projetoExiste || usuarioExiste.length == 0) {
+            throw new ErrorResponse(
+                400,
+                "O usuario informado não existe.",
+                { message: `O id ${objProjeto.usuario.idUsuario} informado não é de um usuario existente.` }
+            )
+        }
 
         objProjeto.idProjeto = await this.#projetoDAO.create(objProjeto);
 
@@ -66,7 +75,7 @@ module.exports = class ProjetService {
 
         const projeto = await this.#projetoDAO.findById(objProjeto.idProjeto);
 
-        if (!projeto) {
+        if (!projeto || projeto.length == 0) {
             throw new ErrorResponse(
                 404,
                 "Projeto não encontrado",
