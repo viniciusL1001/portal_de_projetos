@@ -14,7 +14,6 @@ module.exports = class UsuarioRouter {
 
     createRoutes = () => {
         this.#router.post("/",
-            this.#jwtMiddleware.validateToken,
             this.#usuarioMiddleware.validateBody,
             this.#usuarioController.store
         );

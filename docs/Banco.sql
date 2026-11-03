@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `Comentario`(
 
     PRIMARY KEY(`idComentario`),
     INDEX `fk_Comentario_Projeto_idx` (`idProjeto`),
-    FOREIGN KEY (`idProjeto`) REFERENCES `Projeto` (`idProjeto`),
+    FOREIGN KEY (`idProjeto`) REFERENCES `Projeto` (`idProjeto`) ON DELETE CASCADE,
     INDEX `fk_Comentario_Usuario_idx` (`idUsuario`),
     FOREIGN KEY (`idUsuario`) REFERENCES `Usuario` (`idUsuario`),
 

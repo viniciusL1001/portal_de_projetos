@@ -116,12 +116,8 @@ module.exports = class ComentarioService {
 
         const comentarios = await this.#comentarioDAO.findByIdProjeto(objComentario);
 
-        if (!comentarios || comentarios.length == 0) {
-            throw new ErrorResponse(
-                400,
-                "Sem comentarios no projeto.",
-                { message: `O projeto de id ${idProjeto} não possui comentarios ainda.` }
-            );
+        if (!comentarios || comentarios.length === 0) {
+            return [];
         }
 
         return comentarios;
