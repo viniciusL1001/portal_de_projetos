@@ -79,7 +79,7 @@ module.exports = class Projeto{
                 throw new Error("descricao deve ser uma string.");
             }
 
-            this.#descricao = descricao === "" ? null : descricao;
+            this.#descricao = value.trim() === "" ? null : descricao;
         } else {
             this.#descricao = null;
         }
@@ -94,7 +94,7 @@ module.exports = class Projeto{
             throw new Error("dataCriacao deve ser uma data válida.");
         }
 
-        const data = value instanceof Date ? new Date(value.GetTime()) : new Date(value);
+        const data = value instanceof Date ? new Date(value.getTime()) : new Date(value);
 
         if(isNaN(data.getTime())){
             throw new Error("dataCriacao deve ser uma data válida.")
@@ -113,11 +113,7 @@ module.exports = class Projeto{
                 value.length > 255 ||
                 !/\.(png|jpe?g|webp|gif)$/i.test(value)
             ) {
-                throw new ErrorResponse(
-                    400,
-                    "Erro na validação de dados.",
-                    { message: "O campo 'imagem' deve ser uma string de até 255 caracteres com um formato de imagem válido." }
-                );
+                throw new Error("imagem deve ser uma string de até 255 caracteres e estar em um formato válido de imagem.");
             }
             this.#imagem = value;
         } else {

@@ -36,8 +36,8 @@ module.exports = class ComentarioRouter {
         );
 
         this.#router.get("/projeto/:idProjeto",
-            this.#comentarioMiddleware.validateIdProjetoParam,
-            this.#comentarioController.show
+            this.#comentarioMiddleware.validateProjetoIdParam,
+            this.#comentarioController.showByProjeto
         );
 
         return this.#router;

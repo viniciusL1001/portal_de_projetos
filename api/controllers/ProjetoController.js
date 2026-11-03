@@ -23,7 +23,7 @@ module.exports = class ProjetoController {
     update = async (request, response, next) => {
         try {
             const idProjeto = request.params.idProjeto;
-            const jsonProjeto = request.projeto;
+            const jsonProjeto = request.body.projeto;
 
             const projetoAtualizado = await this.#projetoService.updateService(idProjeto, jsonProjeto);
 
@@ -32,8 +32,8 @@ module.exports = class ProjetoController {
                 message: "Atualizado com sucesso",
                 data: {
                     projeto: {
-                        idProjeto: parseInt(request.projeto.idProjeto),
-                        titulo: request.projeto.titulo
+                        idProjeto: parseInt(jsonProjeto.idProjeto),
+                        titulo: jsonProjeto.titulo
                     }
                 }
             });
@@ -81,7 +81,7 @@ module.exports = class ProjetoController {
     show = async (request, response, next) => {
         try {
             const idProjeto = request.params.idProjeto;
-            const projeto = await this.#projetoService.findByIdSerive(idProjeto);
+            const projeto = await this.#projetoService.findByIdService(idProjeto);
 
             response.status(200).json({
                 success: true,

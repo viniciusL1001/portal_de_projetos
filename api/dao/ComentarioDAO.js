@@ -97,7 +97,7 @@ module.exports = class ComentarioDAO {
                 comentario.* 
             FROM comentario 
             JOIN usuario 
-            ON comentario.idUsuario = usuario.idUsuario;
+            ON comentario.idUsuario = usuario.idUsuario
             JOIN projeto
             ON comentario.idProjeto = projeto.idProjeto
             WHERE comentario.idComentario = ?`;

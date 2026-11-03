@@ -22,12 +22,12 @@ module.exports = class ProjetService {
         objProjeto.usuario = objUsuario;
         objProjeto.titulo = jsonProjeto.titulo;
         objProjeto.descricao = jsonProjeto.descricao;
-        objProjeto.dataCricao = new Date();
+        objProjeto.dataCriacao = new Date();
         objProjeto.imagem = jsonProjeto.imagem;
-        objProjeto.linkGitHub = jsonProjeto.linkGithub;
+        objProjeto.linkGitHub = jsonProjeto.linkGitHub;
 
         const usuarioExiste = await this.#usuarioDAO.findById(objProjeto.usuario.idUsuario);
-        if (!projetoExiste || usuarioExiste.length == 0) {
+        if (!usuarioExiste) {
             throw new ErrorResponse(
                 400,
                 "O usuario informado não existe.",
@@ -44,7 +44,7 @@ module.exports = class ProjetService {
         const jsonProjeto = requestBody.projeto
 
         const objUsuario = new Usuario();
-        objUsuario.idUsuario = requestBody.usuario.idUsuario;
+        objUsuario.idUsuario = jsonProjeto.usuario.idUsuario;
 
         const objProjeto = new Projeto();
 

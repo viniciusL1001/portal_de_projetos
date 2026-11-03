@@ -83,6 +83,8 @@ module.exports = class Server {
 
         this.beforeRouting();
         this.setupUsuario();
+        this.setupProjeto();
+        this.setupComentario();
         this.setupErrorMiddleware();
     };
 
@@ -126,13 +128,13 @@ module.exports = class Server {
     setupComentario = () => {
         this.#comentarioMiddleware = new ComentarioMiddleware();
 
-        this.#comentarioDAO = new ProjetoDAO(this.#database);
+        this.#comentarioDAO = new ComentarioDAO(this.#database);
 
-        this.#comentarioService = new ProjetoService(this.#comentarioDAO, this.#usuarioDAO, this.#projetoDAO);
+        this.#comentarioService = new ComentarioService(this.#comentarioDAO, this.#usuarioDAO, this.#projetoDAO);
 
-        this.#comentarioController = new ProjetoController(this.#comentarioService);
+        this.#comentarioController = new ComentarioController(this.#comentarioService);
 
-        this.#comentarioRouter = new ProjetoRouter(
+        this.#comentarioRouter = new ComentarioRouter(
             this.#router,
             this.#comentarioMiddleware,
             this.#comentarioController

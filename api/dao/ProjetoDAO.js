@@ -3,7 +3,7 @@ module.exports = class ProjetoDAO {
 
     constructor(databaseInstance) {
         console.log("ProjetoDAO.constructor()")
-        this.database = databaseInstance;
+        this.#database = databaseInstance;
     }
 
     create = async (objProjeto) => {
@@ -66,7 +66,7 @@ module.exports = class ProjetoDAO {
             JOIN usuario ON projeto.idUsuario = usuario.idUsuario;`;
         
         const pool = await this.#database.getPool();
-        const [matrizResultado] = await pool.execute(SQL, params);
+        const [matrizResultado] = await pool.execute(SQL);
 
         return matrizResultado.map(row => ({
             idProjeto: row.idProjeto,
@@ -89,7 +89,7 @@ module.exports = class ProjetoDAO {
             WHERE projeto.idProjeto = ?;`;
 
         const pool = await this.#database.getPool();
-        const [resultado] = await pool.execute(SQL, idProjeto);
+        const [resultado] = await pool.execute(SQL, [idProjeto]);
 
         return resultado[0];
     }
