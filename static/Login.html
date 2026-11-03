@@ -17,11 +17,12 @@
             <input type="password" id="txtSenha" required autocomplete="current-password">
             <div class="acoes">
                 <button type="submit">Entrar</button>
+                <button type="button" id="btnCadastro">Criar conta</button>
             </div>
         </form>
         <div id="divResposta" role="status" aria-live="polite"></div>
     </section>
-    <p class="ajuda">Para entrar, é necessário já existir um usuário cadastrado no banco de dados.</p>
+    <p class="ajuda">Ainda não tem cadastro? Clique em "Criar conta".</p>
     <script type="module">
         import ApiService from "./ApiService.js";
         import { mostrarMensagem } from "./sessao.js";
@@ -29,6 +30,10 @@
         const api = new ApiService();
         const form = document.getElementById("formLogin");
         const divResposta = document.getElementById("divResposta");
+
+        document.getElementById("btnCadastro").onclick = () => {
+            window.location.href = "Cadastro.html";
+        };
 
         form.addEventListener("submit", async (event) => {
             event.preventDefault();

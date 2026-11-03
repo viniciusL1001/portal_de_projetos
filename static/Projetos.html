@@ -266,13 +266,13 @@
             let comentarios = [];
             try {
                 const resposta = await api.get("/api/comentarios/projeto/" + idProjeto);
-                comentarios = resposta.data?.comentarios || [];
-            } catch (erro) {
-                // O backend usa HTTP 400 quando o projeto ainda não possui comentários.
-                if (!(erro.status === 400 && erro.resposta?.message === "Sem comentarios no projeto.")) {
-                    area.textContent = "Erro ao carregar comentários: " + erro.message;
-                    return;
+                comentarios = resposta.data?.comentarios ?? [];
+                if (!Array.isArray(comentarios)) {
+                    throw new Error("Formato de comentários inesperado.");
                 }
+            } catch (erro) {
+                area.textContent = "Erro ao carregar comentários: " + erro.message;
+                return;
             }
 
             if (projetoExpandido !== idProjeto) return;
