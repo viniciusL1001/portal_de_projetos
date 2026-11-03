@@ -50,9 +50,22 @@ module.exports = class ComentarioService {
     }
 
     updateService = async (idComentario, requestBody) => {
+        const comentarioExistente = await this.#comentarioDAO.findById(idComentario);
+
+        if (!comentarioExistente) {
+            throw new ErrorResponse(
+                404,
+                "Comentario não encontrado.",
+                { message: `Não existe comentário com o id ${idComentario}.` }
+            );
+        }
+
         const objComentario = new Comentario();
+
         objComentario.idComentario = idComentario;
-        objComentario.nota = requestBody.nota;
+
+        objComentario.nota = requestBody.nota === undefined ? comentarioExistente.nota : requestBody.nota;
+
         objComentario.texto = requestBody.texto;
 
         return await this.#comentarioDAO.update(objComentario);

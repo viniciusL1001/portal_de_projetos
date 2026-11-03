@@ -74,7 +74,7 @@ module.exports = class Projeto{
     }
 
     set descricao(value){
-        if(value !== null){
+        if(value !== null || value !== undefined){
             if(typeof value !== "string"){
                 throw new Error("descricao deve ser uma string.");
             }

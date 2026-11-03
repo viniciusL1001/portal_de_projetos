@@ -3,10 +3,10 @@ module.exports = class ComentarioRouter {
     #comentarioController;
     #comentarioMiddleware;
 
-    constructor(router, comentarioController, comentarioMiddleware) {
+    constructor(router, comentarioMiddleware, comentarioController) {
         this.#router = router;
-        this.#comentarioController = comentarioController;
         this.#comentarioMiddleware = comentarioMiddleware;
+        this.#comentarioController = comentarioController;
     }
 
     createRoutes = () => {
