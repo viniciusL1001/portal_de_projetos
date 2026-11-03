@@ -25,14 +25,14 @@ module.exports = class ProjetoController {
             const idProjeto = request.params.idProjeto;
             const jsonProjeto = request.body.projeto;
 
-            const projetoAtualizado = await this.#projetoService.updateService(idProjeto, jsonProjeto);
+            const projetoAtualizado = await this.#projetoService.updateService(idProjeto, request.body);
 
             response.status(200).json({
                 success: true,
                 message: "Atualizado com sucesso",
                 data: {
                     projeto: {
-                        idProjeto: parseInt(jsonProjeto.idProjeto),
+                        idProjeto: parseInt(idProjeto),
                         titulo: jsonProjeto.titulo
                     }
                 }

@@ -98,7 +98,7 @@ module.exports = class Server {
         this.#usuarioController = new UsuarioController(this.#usuarioService);
 
         this.#usuarioRouter = new UsuarioRouter(
-            this.#router,
+            express.Router(),
             this.#jwtMiddleware,
             this.#usuarioMiddleware,
             this.#usuarioController
@@ -117,7 +117,7 @@ module.exports = class Server {
         this.#projetoController = new ProjetoController(this.#projetoService);
 
         this.#projetoRouter = new ProjetoRouter(
-            this.#router,
+            express.Router(),
             this.#projetoMiddleware,
             this.#projetoController
         );
@@ -130,12 +130,12 @@ module.exports = class Server {
 
         this.#comentarioDAO = new ComentarioDAO(this.#database);
 
-        this.#comentarioService = new ComentarioService(this.#comentarioDAO, this.#usuarioDAO, this.#projetoDAO);
+        this.#comentarioService = new ComentarioService(this.#comentarioDAO, this.#projetoDAO, this.#usuarioDAO);
 
         this.#comentarioController = new ComentarioController(this.#comentarioService);
 
         this.#comentarioRouter = new ComentarioRouter(
-            this.#router,
+            express.Router(),
             this.#comentarioMiddleware,
             this.#comentarioController
         );

@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `Comentario`(
     `idProjeto` INT UNSIGNED NOT NULL,
     `idUsuario` INT UNSIGNED NOT NULL,
     `nota` INT NULL,
-    `texto` VARCHAR(500) NOT NULL,
+    `texto` VARCHAR(1000) NOT NULL,
     `dataComentario` DATE NOT NULL,
 
     PRIMARY KEY(`idComentario`),

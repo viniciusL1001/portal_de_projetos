@@ -3,11 +3,11 @@ module.exports = class ProjetoRouter {
     #projetoController;
     #projetoMiddleware;
 
-    constructor(router, projetoController, projetoMiddleware) {
+    constructor(router, projetoMiddleware, projetoController) {
         console.log("ProjetoRouter.constructor()");
         this.#router = router;
-        this.#projetoController = projetoController;
         this.#projetoMiddleware = projetoMiddleware;
+        this.#projetoController = projetoController;
     }
 
     createRoutes = () => {

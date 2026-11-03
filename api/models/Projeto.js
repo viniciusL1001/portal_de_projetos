@@ -79,7 +79,7 @@ module.exports = class Projeto{
                 throw new Error("descricao deve ser uma string.");
             }
 
-            this.#descricao = value.trim() === "" ? null : descricao;
+            this.#descricao = value.trim() === "" ? null : value.trim();
         } else {
             this.#descricao = null;
         }

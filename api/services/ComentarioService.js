@@ -24,7 +24,7 @@ module.exports = class ComentarioService {
         const objComentario = new Comentario();
         objComentario.projeto = objProjeto;
         objComentario.usuario = objUsuario;
-        objComentario.nota = jsonComentario.nota;
+        objComentario.nota = jsonComentario.nota ?? null;
         objComentario.texto = jsonComentario.texto;
         objComentario.dataComentario = new Date();
         
