@@ -265,7 +265,9 @@
             try {
                 // O autor do novo projeto sempre é quem está logado.
                 $("txtAutor").value = sessao.usuario.idUsuario;
-                await api.post("/api/projetos", dadosProjeto());
+                const dados = dadosProjeto();
+                await enviarImagemSeSelecionada(dados);
+                await api.post("/api/projetos", dados);
                 limpar();
                 mensagem("Projeto criado com sucesso.");
                 await listar();
@@ -277,7 +279,9 @@
         $("btnAtualizar").onclick = async () => {
             if (!$("txtId").value) return mensagem("Selecione um projeto para atualizar.", true);
             try {
-                await api.put("/api/projetos", $("txtId").value, dadosProjeto());
+                const dados = dadosProjeto();
+                await enviarImagemSeSelecionada(dados);
+                await api.put("/api/projetos", $("txtId").value, dados);
                 mensagem("Projeto atualizado com sucesso.");
                 await listar();
             } catch (erro) {
