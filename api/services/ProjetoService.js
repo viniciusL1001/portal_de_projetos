@@ -11,9 +11,15 @@ module.exports = class ProjetService {
         this.#usuarioDAO = usuarioDAOInstance;
     }
 
-    createService = async (jsonProjeto) => {
+    createService = async (jsonProjeto, idAutenticado) => {
+        if (!Number.isInteger(idAutenticado) || idAutenticado <= 0) {
+            throw new ErrorResponse(401, "Faça login novamente.");
+        }
+        if (Number(jsonProjeto.usuario?.idUsuario) !== idAutenticado) {
+            throw new ErrorResponse(403, "Você só pode publicar projetos na sua conta.");
+        }
         const objUsuario = new Usuario();
-        objUsuario.idUsuario = jsonProjeto.usuario.idUsuario;
+        objUsuario.idUsuario = idAutenticado;
 
         const objProjeto = new Projeto();
 
@@ -40,11 +46,18 @@ module.exports = class ProjetService {
         return objProjeto;
     }
 
-    updateService = async (idProjeto, requestBody) => {
+    updateService = async (idProjeto, requestBody, idAutenticado) => {
+        const existente = await this.#projetoDAO.findById(idProjeto);
+        if (!existente) {
+            throw new ErrorResponse(404, "Projeto não encontrado.");
+        }
+        if (Number(existente.idUsuario) !== idAutenticado) {
+            throw new ErrorResponse(403, "Somente o autor pode atualizar este projeto.");
+        }
         const jsonProjeto = requestBody.projeto
 
         const objUsuario = new Usuario();
-        objUsuario.idUsuario = jsonProjeto.usuario.idUsuario;
+        objUsuario.idUsuario = idAutenticado;
 
         const objProjeto = new Projeto();
 
@@ -58,10 +71,17 @@ module.exports = class ProjetService {
         return await this.#projetoDAO.update(objProjeto);
     }
 
-    deleteService = async (idProjeto) => {
+    deleteService = async (idProjeto, idAutenticado) => {
+        const existente = await this.#projetoDAO.findById(idProjeto);
+        if (!existente) {
+            throw new ErrorResponse(404, "Projeto não encontrado.");
+        }
+        if (Number(existente.idUsuario) !== idAutenticado) {
+            throw new ErrorResponse(403, "Somente o autor pode excluir este projeto.");
+        }
         const objProjeto = new Projeto();
         objProjeto.idProjeto = idProjeto;
-        return await this.#projetoDAO.delete(objProjeto);
+        return await this.#projetoDAO.delete(objProjeto, idAutenticado);
     }
 
     findAllService = async () => {
