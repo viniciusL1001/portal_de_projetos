@@ -8,7 +8,7 @@ module.exports = class ComentarioController {
     store = async (request, response, next) => {
         try {
             const jsonComentario = request.body.comentario;
-            const resultado = await this.#comentarioService.createService(jsonComentario);
+            const resultado = await this.#comentarioService.createService(jsonComentario, request.usuarioAutenticado.idUsuario);
 
             response.status(200).json({
                 success: true,
@@ -25,7 +25,7 @@ module.exports = class ComentarioController {
             const idComentario = request.params.idComentario;
             const jsonComentario = request.body.comentario;
 
-            const resultado = await this.#comentarioService.updateService(idComentario, jsonComentario);
+            const resultado = await this.#comentarioService.updateService(idComentario, jsonComentario, request.usuarioAutenticado.idUsuario);
 
             response.status(200).json({
                 success: true,
@@ -47,7 +47,7 @@ module.exports = class ComentarioController {
         try {
             const idComentario = request.params.idComentario;
             
-            const excluiu = await this.#comentarioService.deleteService(idComentario);
+            const excluiu = await this.#comentarioService.deleteService(idComentario, request.usuarioAutenticado.idUsuario);
 
             if (!excluiu) {
                 return response.status(404).json({
