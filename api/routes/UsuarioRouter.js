@@ -21,13 +21,15 @@ module.exports = class UsuarioRouter {
         this.#router.put("/:idUsuario",
             this.#jwtMiddleware.validateToken,
             this.#usuarioMiddleware.validateIdParam,
-            this.#usuarioMiddleware.validateBody,
+            this.#usuarioMiddleware.validateOwnAccount,
+            this.#usuarioMiddleware.validateUpdateBody,
             this.#usuarioController.update
         );
 
         this.#router.delete("/:idUsuario",
             this.#jwtMiddleware.validateToken,
             this.#usuarioMiddleware.validateIdParam,
+            this.#usuarioMiddleware.validateOwnAccount,
             this.#usuarioController.destroy
         );
 
@@ -36,7 +38,13 @@ module.exports = class UsuarioRouter {
             this.#usuarioController.index
         );
 
+        this.#router.get("/me",
+            this.#jwtMiddleware.validateToken,
+            this.#usuarioController.me
+        );
+
         this.#router.get("/:idUsuario",
+            this.#jwtMiddleware.validateToken,
             this.#usuarioMiddleware.validateIdParam,
             this.#usuarioController.show
         );
