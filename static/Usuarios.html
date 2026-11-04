@@ -3,178 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usuários - Portal de Projetos</title>
+    <title>Explorar usuários - Portal de Projetos</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body class="container">
-    <h1>Gerenciamento de Usuários</h1>
-    <nav><a href="dashboard.html">Início</a> <a href="Projetos.html">Projetos e comentários</a> <button id="btnSair" type="button">Sair</button></nav>
+    <h1>Explorar usuários</h1>
+    <nav>
+        <a href="dashboard.html">Início</a>
+        <a href="Projetos.html">Projetos</a>
+        <a href="Perfil.html">Meu perfil</a>
+        <button id="btnSair" type="button">Sair</button>
+    </nav>
 
     <section class="caixa">
-        <h2>Filtro</h2>
-        <label for="txtFiltro">Nome do usuário</label>
-        <input id="txtFiltro" class="filtro" type="search" placeholder="Buscar pelo nome">
+        <h2>Encontrar pessoas</h2>
+        <label for="txtFiltro">Pesquisar pelo nome</label>
+        <input id="txtFiltro" type="search" placeholder="Digite o nome do usuário">
+        <p class="ajuda">Você pode visualizar perfis e projetos públicos. Só o dono de cada conta pode editá-la ou excluí-la.</p>
+        <div id="resposta" role="status" aria-live="polite"></div>
+        <div id="listaUsuarios"></div>
     </section>
-    <section class="caixa">
-        <h2>Cadastro de Usuário</h2>
-        <form id="formUsuario">
-            <label for="txtId">ID</label>
-            <input id="txtId" readonly placeholder="Selecione na tabela">
-            <label for="txtNome">Nome (mínimo 4 caracteres)</label>
-            <input id="txtNome" required minlength="4">
-            <label for="txtEmail">E-mail</label>
-            <input id="txtEmail" type="email" required>
-            <label for="txtSenha">Senha</label>
-            <input id="txtSenha" type="password" required minlength="6">
-            <p class="ajuda">A senha deve ter pelo menos 6 caracteres, uma maiúscula, um número e um caractere especial. O backend exige a senha também ao atualizar um usuário.</p>
-            <div class="acoes">
-                <button type="submit">Criar</button>
-                <button type="button" id="btnAtualizar">Atualizar</button>
-                <button type="button" id="btnExcluir">Excluir</button>
-                <button type="button" id="btnLimpar">Limpar</button>
-                <button type="button" id="btnListar">Listar</button>
-            </div>
-        </form>
-        <div id="divResposta" role="status" aria-live="polite"></div>
-    </section>
-    <section class="caixa">
-        <h2>Lista de usuários</h2>
-        <div id="divTabela" class="tabela-scroll"></div>
+
+    <section class="caixa" id="detalhes" hidden>
+        <h2>Perfil público</h2>
+        <h3 id="nomePerfil"></h3>
+        <div id="projetosPerfil"></div>
     </section>
 
     <script type="module">
         import ApiService from "./ApiService.js";
         import { obterSessao, sair, mostrarMensagem } from "./sessao.js";
+
         const sessao = obterSessao();
         if (!sessao) throw new Error("Login necessário.");
         const api = new ApiService(sessao.token);
         const $ = id => document.getElementById(id);
         $("btnSair").onclick = sair;
         let usuarios = [];
+        let idSelecionado = null;
 
-        function mensagem(texto, erro = false) {
-            mostrarMensagem($("divResposta"), texto, erro);
-        }
-
-        function limpar() {
-            $("formUsuario").reset();
-            $("txtId").value = "";
-        }
-
-        function selecionar(usuario) {
-            $("txtId").value = usuario.idUsuario;
-            $("txtNome").value = usuario.nomeUsuario || "";
-            $("txtEmail").value = usuario.email || "";
-            $("txtSenha").value = "";
-            mensagem("Usuário " + usuario.idUsuario + " selecionado. Informe uma senha para atualizar.");
-        }
-
-        function dadosUsuario() {
-            const usuario = {
-                nomeUsuario: $("txtNome").value.trim(),
-                email: $("txtEmail").value.trim(),
-                senha: $("txtSenha").value
-            };
-            if (usuario.nomeUsuario.length < 4) throw new Error("O nome precisa ter pelo menos 4 caracteres.");
-            if (!usuario.email.includes("@")) throw new Error("Informe um e-mail válido.");
-            if (!/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>])[^\s]{6,}$/.test(usuario.senha)) {
-                throw new Error("A senha deve conter 6 caracteres, uma maiúscula, um número e um caractere especial.");
+        function listarUsuarios() {
+            const filtro = $("txtFiltro").value.trim().toLowerCase();
+            $("listaUsuarios").replaceChildren();
+            const filtrados = usuarios.filter(u => u.nomeUsuario.toLowerCase().includes(filtro));
+            if (!filtrados.length) {
+                $("listaUsuarios").textContent = "Nenhum usuário encontrado.";
+                return;
             }
-            return { usuario };
-        }
 
-        function renderizar() {
-            const div = $("divTabela");
-            div.replaceChildren();
-            const tabela = document.createElement("table");
-            const thead = document.createElement("thead");
-            const cabecalho = document.createElement("tr");
-            ["ID", "Nome", "E-mail", "Ação"].forEach(t => {
-                const th = document.createElement("th");
-                th.textContent = t;
-                cabecalho.appendChild(th);
-            });
-            thead.appendChild(cabecalho);
-            tabela.appendChild(thead);
-            const corpo = document.createElement("tbody");
-            const filtro = $("txtFiltro").value.toLowerCase();
-            const filtrados = usuarios.filter(u => (u.nomeUsuario || "").toLowerCase().includes(filtro));
+            const lista = document.createElement("ul");
             for (const usuario of filtrados) {
-                const linha = document.createElement("tr");
-                [usuario.idUsuario, usuario.nomeUsuario, usuario.email].forEach(valor => {
-                    const td = document.createElement("td");
-                    td.textContent = valor ?? "";
-                    linha.appendChild(td);
-                });
-                const td = document.createElement("td");
+                const item = document.createElement("li");
                 const botao = document.createElement("button");
                 botao.type = "button";
-                botao.textContent = "Selecionar";
-                botao.onclick = () => selecionar(usuario);
-                td.appendChild(botao);
-                linha.appendChild(td);
-                corpo.appendChild(linha);
+                botao.textContent = usuario.nomeUsuario;
+                botao.onclick = () => mostrarUsuario(usuario.idUsuario);
+                item.appendChild(botao);
+                if (usuario.idUsuario === sessao.usuario.idUsuario) {
+                    const texto = document.createElement("span");
+                    texto.textContent = " (você)";
+                    item.appendChild(texto);
+                }
+                lista.appendChild(item);
             }
-            tabela.appendChild(corpo);
-            div.appendChild(tabela);
-            if (!filtrados.length) {
-                const p = document.createElement("p");
-                p.textContent = "Nenhum usuário encontrado.";
-                div.appendChild(p);
+            $("listaUsuarios").appendChild(lista);
+        }
+
+        async function mostrarUsuario(idUsuario) {
+            idSelecionado = idUsuario;
+            $("detalhes").hidden = false;
+            $("nomePerfil").textContent = "Carregando...";
+            $("projetosPerfil").textContent = "";
+            try {
+                const [perfil, projetosResposta] = await Promise.all([
+                    api.getById("/api/usuarios", idUsuario),
+                    api.get("/api/projetos")
+                ]);
+                if (idSelecionado !== idUsuario) return;
+                const usuario = perfil.data?.usuario;
+                if (!usuario) throw new Error("Perfil não encontrado.");
+                $("nomePerfil").textContent = usuario.nomeUsuario;
+
+                const projetos = (projetosResposta.data?.message || [])
+                    .filter(p => Number(p.usuario?.idUsuario) === Number(idUsuario));
+                if (!projetos.length) {
+                    $("projetosPerfil").textContent = "Este usuário ainda não publicou projetos.";
+                    return;
+                }
+                const lista = document.createElement("ul");
+                for (const projeto of projetos) {
+                    const item = document.createElement("li");
+                    const titulo = document.createElement("strong");
+                    titulo.textContent = projeto.titulo;
+                    item.appendChild(titulo);
+                    if (projeto.descricao) {
+                        const descricao = document.createElement("p");
+                        descricao.textContent = projeto.descricao;
+                        item.appendChild(descricao);
+                    }
+                    if (projeto.imagem) {
+                        const imagem = document.createElement("img");
+                        imagem.src = projeto.imagem;
+                        imagem.alt = "Imagem do projeto " + projeto.titulo;
+                        imagem.className = "miniatura-projeto";
+                        item.appendChild(imagem);
+                    }
+                    if (projeto.linkGitHub) {
+                        const link = document.createElement("a");
+                        link.href = projeto.linkGitHub;
+                        link.textContent = " Ver no GitHub";
+                        link.target = "_blank";
+                        link.rel = "noopener noreferrer";
+                        item.appendChild(link);
+                    }
+                    lista.appendChild(item);
+                }
+                $("projetosPerfil").replaceChildren(lista);
+            } catch (erro) {
+                if (idSelecionado === idUsuario) {
+                    $("nomePerfil").textContent = "Não foi possível carregar o perfil.";
+                    mostrarMensagem($("resposta"), erro.message, true);
+                }
             }
         }
 
-        async function listar() {
+        $("txtFiltro").addEventListener("input", listarUsuarios);
+        (async () => {
             try {
                 const resposta = await api.get("/api/usuarios");
                 usuarios = resposta.data?.usuarios || [];
-                if (!Array.isArray(usuarios)) throw new Error("Formato de usuários inesperado.");
-                renderizar();
+                if (!Array.isArray(usuarios)) throw new Error("Lista de usuários inválida.");
+                listarUsuarios();
             } catch (erro) {
-                mensagem(erro.message, true);
+                mostrarMensagem($("resposta"), erro.message, true);
             }
-        }
-
-        $("formUsuario").addEventListener("submit", async event => {
-            event.preventDefault();
-            try {
-                await api.post("/api/usuarios", dadosUsuario());
-                limpar();
-                mensagem("Usuário criado.");
-                await listar();
-            } catch (erro) {
-                mensagem(erro.message, true);
-            }
-        });
-        $("btnAtualizar").onclick = async () => {
-            if (!$("txtId").value) return mensagem("Selecione um usuário.", true);
-            try {
-                await api.put("/api/usuarios", $("txtId").value, dadosUsuario());
-                mensagem("Usuário atualizado.");
-                await listar();
-            } catch (erro) {
-                mensagem(erro.message, true);
-            }
-        };
-        $("btnExcluir").onclick = async () => {
-            const id = $("txtId").value;
-            if (!id) return mensagem("Selecione um usuário.", true);
-            if (!confirm("Excluir o usuário " + id + "?")) return;
-            try {
-                await api.delete("/api/usuarios", id);
-                limpar();
-                mensagem("Usuário excluído.");
-                if (Number(id) === sessao.usuario.idUsuario) return sair();
-                await listar();
-            } catch (erro) {
-                mensagem(erro.message + " Usuários associados a projetos ou comentários podem não ser excluídos.", true);
-            }
-        };
-
-        $("btnLimpar").onclick = limpar;
-        $("btnListar").onclick = listar;
-        $("txtFiltro").addEventListener("input", renderizar);
-        listar();
+        })();
     </script>
 </body>
 </html>
