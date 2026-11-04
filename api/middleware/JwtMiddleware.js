@@ -11,13 +11,13 @@ module.exports = class JwtMiddleware {
 
         if (autorizado === true) {
             const payload = jwt.payload;
-            const obj = {
+            // Usa somente o ID que veio do token verificado.
+            // Nunca confia no ID informado pelo navegador para autorizar alterações.
+            request.usuarioAutenticado = {
+                idUsuario: Number(payload.idUsuario),
                 email: payload.email,
-                name: payload.name
+                nomeUsuario: payload.name
             };
-
-            request.headers.authorization = jwt.gerarToken(obj);
-
             next();
         } else {
             const objResposta = {
