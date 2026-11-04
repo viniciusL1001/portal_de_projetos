@@ -92,7 +92,7 @@ module.exports = class UsuarioController {
     show = async (request, response, next) => {
         try {
             const idUsuario = request.params.idUsuario;
-            const usuario = await this.#usuarioService.findByIdService(idUsuario);
+            const usuario = await this.#usuarioService.findPublicByIdService(idUsuario);
 
             response.status(200).json({
                 success: true,
