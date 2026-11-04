@@ -63,18 +63,30 @@ module.exports = class UsuarioDAO {
     };
 
     delete = async (objUsuario) => {
-        const SQL = "DELETE FROM usuario WHERE idUsuario = ?;";
-
-        const param = [objUsuario.idUsuario];
-
         const pool = await this.#database.getPool();
-        const [resultado] = await pool.execute(SQL, param);
-
-        return resultado.affectedRows > 0;
+        const conexao = await pool.getConnection();
+        try {
+            await conexao.beginTransaction();
+            const id = objUsuario.idUsuario;
+            // Remove comentarios do usuario e comentarios dos seus projetos.
+            await conexao.execute(
+                "DELETE FROM Comentario WHERE idUsuario = ? OR idProjeto IN (SELECT idProjeto FROM Projeto WHERE idUsuario = ?)",
+                [id, id]
+            );
+            await conexao.execute("DELETE FROM Projeto WHERE idUsuario = ?", [id]);
+            const [resultado] = await conexao.execute("DELETE FROM Usuario WHERE idUsuario = ?", [id]);
+            await conexao.commit();
+            return resultado.affectedRows > 0;
+        } catch (erro) {
+            await conexao.rollback();
+            throw erro;
+        } finally {
+            conexao.release();
+        }
     };
 
     findAll = async () => {
-        const SQL = "SELECT idUsuario, nomeUsuario, email FROM usuario;";
+        const SQL = "SELECT idUsuario, nomeUsuario FROM usuario;";
 
         const pool = await this.#database.getPool();
         const [matrizResultado] = await pool.execute(SQL);
@@ -82,7 +94,6 @@ module.exports = class UsuarioDAO {
         return matrizResultado.map(row => ({
             idUsuario: row.idUsuario,
             nomeUsuario: row.nomeUsuario,
-            email: row.email,
         }));
     };
 
