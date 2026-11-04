@@ -24,17 +24,20 @@ module.exports = class ProjetoRouter {
         );
 
         this.#router.post("/",
+            this.#jwtMiddleware.validateToken,
             this.#projetoMiddleware.validateBody,
             this.#projetoController.store
         );
 
         this.#router.put("/:idProjeto",
+            this.#jwtMiddleware.validateToken,
             this.#projetoMiddleware.validateIdParam,
             this.#projetoMiddleware.validateBody,
             this.#projetoController.update
         );
 
         this.#router.delete("/:idProjeto",
+            this.#jwtMiddleware.validateToken,
             this.#projetoMiddleware.validateIdParam,
             this.#projetoController.destroy
         );
