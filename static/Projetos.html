@@ -25,8 +25,12 @@
             <input id="txtTitulo" maxlength="100" required>
             <label for="txtDescricao">Descrição</label>
             <textarea id="txtDescricao"></textarea>
-            <label for="txtImagem">Imagem (URL ou caminho terminado em .png, .jpg, .jpeg, .webp ou .gif)</label>
+            <label for="txtImagem">Imagem atual (URL ou caminho)</label>
             <input id="txtImagem" maxlength="255" placeholder="Opcional">
+            <label for="arquivoImagem">Escolha PNG/JPG do computador (até 2 MB)</label>
+            <input id="arquivoImagem" type="file" accept=".png,.jpg,.jpeg,image/png,image/jpeg">
+            <p class="ajuda">O arquivo selecionado substitui a imagem anterior ao salvar.</p>
+            <img id="previaImagem" class="previa-imagem" alt="Prévia da imagem" hidden>
             <label for="txtGitHub">Link do GitHub</label>
             <input id="txtGitHub" type="url" placeholder="https://github.com/usuario/repositorio" required>
             <label for="txtAutor">ID do autor</label>
@@ -69,6 +73,7 @@
             $("formProjeto").reset();
             $("txtId").value = "";
             $("txtAutor").value = sessao.usuario.idUsuario;
+            mostrarPrevia("");
         }
 
         function selecionar(projeto) {
@@ -76,6 +81,8 @@
             $("txtTitulo").value = projeto.titulo || "";
             $("txtDescricao").value = projeto.descricao || "";
             $("txtImagem").value = projeto.imagem || "";
+            $("arquivoImagem").value = "";
+            mostrarPrevia(projeto.imagem || "");
             $("txtGitHub").value = projeto.linkGitHub || "";
             $("txtAutor").value = projeto.usuario?.idUsuario || projeto.idUsuario || "";
             mensagem("Projeto " + projeto.idProjeto + " selecionado.");
@@ -93,7 +100,7 @@
             if (!/^https:\/\/(www\.)?github\.com\//i.test(linkGitHub)) {
                 throw new Error("O link deve ser uma URL HTTPS do github.com.");
             }
-            if (imagem && !/\.(png|jpe?g|webp|gif)$/i.test(imagem)) {
+            if (imagem && !$("arquivoImagem").files.length && !/\.(png|jpe?g|webp|gif)$/i.test(imagem)) {
                 throw new Error("O campo imagem precisa terminar em um formato de imagem aceito pela API.");
             }
 
