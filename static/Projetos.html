@@ -175,7 +175,7 @@
             const tabela = document.createElement("table");
             const cabecalho = document.createElement("thead");
             const linhaCabecalho = document.createElement("tr");
-            ["ID", "Título", "Descrição", "Autor", "GitHub", "Ações"].forEach(nome => {
+            ["ID", "Título", "Descrição", "Imagem", "Autor", "GitHub", "Ações"].forEach(nome => {
                 const th = document.createElement("th");
                 th.textContent = nome;
                 linhaCabecalho.appendChild(th);
@@ -192,6 +192,15 @@
                 celula(linha, projeto.idProjeto);
                 celula(linha, projeto.titulo);
                 celula(linha, projeto.descricao);
+                const colunaImagem = celula(linha, "");
+                if (projeto.imagem) {
+                    const img = document.createElement("img");
+                    img.src = projeto.imagem;
+                    img.alt = "Imagem de " + projeto.titulo;
+                    img.className = "miniatura-projeto";
+                    img.loading = "lazy";
+                    colunaImagem.appendChild(img);
+                }
                 celula(linha, projeto.usuario?.nomeUsuario || projeto.usuario?.idUsuario || "");
                 const tdLink = celula(linha, "");
                 if (projeto.linkGitHub) {
@@ -226,7 +235,7 @@
                     const detalhes = document.createElement("tr");
                     detalhes.className = "linha-comentarios";
                     const td = document.createElement("td");
-                    td.colSpan = 6;
+                    td.colSpan = 7;
                     const titulo = document.createElement("h3");
                     titulo.textContent = "Comentários de: " + projeto.titulo;
                     td.appendChild(titulo);
