@@ -40,7 +40,7 @@ module.exports = class UsuarioService {
         objUsuario.idUsuario = idUsuario;
         objUsuario.nomeUsuario = jsonUsuario.nomeUsuario;
         objUsuario.email = jsonUsuario.email;
-        objUsuario.senha = jsonUsuario.senha;
+        if (jsonUsuario.senha) objUsuario.senha = jsonUsuario.senha;
 
         return await this.#usuarioDAO.update(objUsuario);
     }
@@ -71,6 +71,14 @@ module.exports = class UsuarioService {
         }
 
         return usuario;
+    }
+
+    findPublicByIdService = async (idUsuario) => {
+        const usuario = await this.findByIdService(idUsuario);
+        return {
+            idUsuario: usuario.idUsuario,
+            nomeUsuario: usuario.nomeUsuario
+        };
     }
 
     loginService = async (jsonUsuario) => {
