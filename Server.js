@@ -142,7 +142,8 @@ module.exports = class Server {
         this.#comentarioRouter = new ComentarioRouter(
             express.Router(),
             this.#comentarioMiddleware,
-            this.#comentarioController
+            this.#comentarioController,
+            this.#jwtMiddleware
         );
 
         this.#app.use("/api/comentarios", this.#comentarioRouter.createRoutes());
