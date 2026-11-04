@@ -66,3 +66,7 @@ td .acoes { margin-top: 0; }
     body { padding: 12px; }
     th, td { padding: 6px; }
 }
+
+/* Imagens dos projetos */
+.previa-imagem { max-width: 220px; max-height: 160px; margin-top: 10px; object-fit: contain; }
+.miniatura-projeto { width: 100px; max-height: 75px; object-fit: cover; }
