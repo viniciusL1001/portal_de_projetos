@@ -94,7 +94,14 @@
             mostrarMensagem($("divResposta"), texto, erro);
         }
 
+        function atualizarPermissoesProjeto(projeto = null) {
+            const pertenceAoUsuario = projeto && Number(projeto.usuario?.idUsuario || projeto.idUsuario) === sessao.usuario.idUsuario;
+            $("btnAtualizar").disabled = !pertenceAoUsuario;
+            $("btnExcluir").disabled = !pertenceAoUsuario;
+        }
+
         function limpar() {
+            atualizarPermissoesProjeto();
             $("formProjeto").reset();
             $("txtId").value = "";
             $("txtAutor").value = sessao.usuario.idUsuario;
@@ -102,6 +109,7 @@
         }
 
         function selecionar(projeto) {
+            atualizarPermissoesProjeto(projeto);
             $("txtId").value = projeto.idProjeto;
             $("txtTitulo").value = projeto.titulo || "";
             $("txtDescricao").value = projeto.descricao || "";
@@ -355,8 +363,10 @@
                     item.appendChild(texto);
                     const acoes = document.createElement("div");
                     acoes.className = "acoes";
-                    acoes.appendChild(botao("Editar", () => preencherComentario(comentario)));
-                    acoes.appendChild(botao("Excluir", () => excluirComentario(comentario.idComentario, idProjeto)));
+                    if (Number(comentario.usuario?.idUsuario ?? comentario.idUsuario) === sessao.usuario.idUsuario) {
+                        acoes.appendChild(botao("Editar", () => preencherComentario(comentario)));
+                        acoes.appendChild(botao("Excluir", () => excluirComentario(comentario.idComentario, idProjeto)));
+                    }
                     item.appendChild(acoes);
                     lista.appendChild(item);
                 });
@@ -390,10 +400,16 @@
             nota.step = "1";
             const botoes = document.createElement("div");
             botoes.className = "acoes";
+            const btnAtualizarComentario = botao("Atualizar comentário", () => salvarComentario(idProjeto, true));
+            btnAtualizarComentario.id = "btnAtualizarComentario";
+            btnAtualizarComentario.disabled = true;
             botoes.append(
                 botao("Criar comentário", () => salvarComentario(idProjeto, false)),
-                botao("Atualizar comentário", () => salvarComentario(idProjeto, true)),
-                botao("Limpar comentário", () => { id.value = ""; texto.value = ""; nota.value = ""; })
+                btnAtualizarComentario,
+                botao("Limpar comentário", () => {
+                    id.value = ""; texto.value = ""; nota.value = "";
+                    btnAtualizarComentario.disabled = true;
+                })
             );
             form.appendChild(botoes);
             area.appendChild(form);
@@ -404,6 +420,7 @@
         }
 
         function preencherComentario(comentario) {
+            $("btnAtualizarComentario").disabled = false;
             $("txtIdComentario").value = comentario.idComentario;
             $("txtTextoComentario").value = comentario.texto || "";
             $("txtNotaComentario").value = comentario.nota ?? "";
