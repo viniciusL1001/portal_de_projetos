@@ -52,4 +52,27 @@ export default class ApiService {
     delete(uri, id) {
         return this.requisicao("DELETE", uri + "/" + id);
     }
+
+    // Envia o arquivo como bytes em vez de converter para JSON.
+    async enviarImagem(uri, arquivo) {
+        const headers = { "Content-Type": arquivo.type };
+        if (this.token) headers.Authorization = "Bearer " + this.token;
+
+        let resposta;
+        try {
+            resposta = await fetch(uri, {
+                method: "POST",
+                headers,
+                body: arquivo
+            });
+        } catch {
+            throw new Error("Não foi possível conectar à API para enviar a imagem.");
+        }
+
+        const json = await resposta.json().catch(() => null);
+        if (!resposta.ok || json?.success !== true) {
+            throw new Error(json?.error?.message || json?.message || "Erro HTTP " + resposta.status);
+        }
+        return json;
+    }
 }
