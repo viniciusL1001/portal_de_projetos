@@ -8,7 +8,7 @@ module.exports = class ProjetoController {
     store = async (request, response, next) => {
         try {
             const jsonProjeto = request.body.projeto;
-            const resultado = await this.#projetoService.createService(jsonProjeto);
+            const resultado = await this.#projetoService.createService(jsonProjeto, request.usuarioAutenticado.idUsuario);
 
             response.status(200).json({
                 success: true,
@@ -25,7 +25,7 @@ module.exports = class ProjetoController {
             const idProjeto = request.params.idProjeto;
             const jsonProjeto = request.body.projeto;
 
-            const projetoAtualizado = await this.#projetoService.updateService(idProjeto, request.body);
+            const projetoAtualizado = await this.#projetoService.updateService(idProjeto, request.body, request.usuarioAutenticado.idUsuario);
 
             response.status(200).json({
                 success: true,
@@ -45,7 +45,7 @@ module.exports = class ProjetoController {
     destroy = async (request, response, next) => {
         try {
             const idProjeto = request.params.idProjeto;
-            const excluiu = await this.#projetoService.deleteService(idProjeto);
+            const excluiu = await this.#projetoService.deleteService(idProjeto, request.usuarioAutenticado.idUsuario);
 
             if (!excluiu) {
                 return response.status(404).json({
