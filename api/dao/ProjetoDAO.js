@@ -33,14 +33,15 @@ module.exports = class ProjetoDAO {
     update = async (objProjeto) => {
         const SQL = `UPDATE projeto 
             SET titulo = ?, descricao = ?, imagem = ?, linkGitHub = ?
-            WHERE idProjeto = ?;`;
+            WHERE idProjeto = ? AND idUsuario = ?;`;
         
         const params = [
             objProjeto.titulo,
             objProjeto.descricao,
             objProjeto.imagem,
             objProjeto.linkGitHub,
-            objProjeto.idProjeto
+            objProjeto.idProjeto,
+            objProjeto.usuario.idUsuario
         ];
 
         const pool = await this.#database.getPool();
@@ -49,10 +50,10 @@ module.exports = class ProjetoDAO {
         return resultado.affectedRows > 0;
     }
 
-    delete = async (objProjeto) => {
-        const SQL = "DELETE FROM projeto WHERE idProjeto = ?;";
+    delete = async (objProjeto, idAutenticado) => {
+        const SQL = "DELETE FROM projeto WHERE idProjeto = ? AND idUsuario = ?;";
         
-        const params = [objProjeto.idProjeto];
+        const params = [objProjeto.idProjeto, idAutenticado];
 
         const pool = await this.#database.getPool();
         const [resultado] = await pool.execute(SQL, params);
