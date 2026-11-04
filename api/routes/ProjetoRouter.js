@@ -1,16 +1,28 @@
+const express = require("express");
+
 module.exports = class ProjetoRouter {
     #router;
     #projetoController;
     #projetoMiddleware;
+    #jwtMiddleware;
+    #imagemController;
 
-    constructor(router, projetoMiddleware, projetoController) {
+    constructor(router, projetoMiddleware, projetoController, jwtMiddleware, imagemController) {
         console.log("ProjetoRouter.constructor()");
         this.#router = router;
         this.#projetoMiddleware = projetoMiddleware;
         this.#projetoController = projetoController;
+        this.#jwtMiddleware = jwtMiddleware;
+        this.#imagemController = imagemController;
     }
 
     createRoutes = () => {
+        this.#router.post("/imagem",
+            this.#jwtMiddleware.validateToken,
+            express.raw({ type: ["image/png", "image/jpeg"], limit: "2mb" }),
+            this.#imagemController.store
+        );
+
         this.#router.post("/",
             this.#projetoMiddleware.validateBody,
             this.#projetoController.store
