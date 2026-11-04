@@ -140,6 +140,19 @@
             };
         }
 
+        async function enviarImagemSeSelecionada(dados) {
+            const arquivo = $("arquivoImagem").files[0];
+            if (!arquivo) return;
+            if (!["image/png", "image/jpeg"].includes(arquivo.type) || arquivo.size > 2097152) {
+                throw new Error("Escolha PNG ou JPG de até 2 MB.");
+            }
+            const resposta = await api.enviarImagem("/api/projetos/imagem", arquivo);
+            dados.projeto.imagem = resposta.data.imagem;
+            $("txtImagem").value = resposta.data.imagem;
+            $("arquivoImagem").value = "";
+            mostrarPrevia(resposta.data.imagem);
+        }
+
         function botao(texto, aoClicar) {
             const b = document.createElement("button");
             b.type = "button";
