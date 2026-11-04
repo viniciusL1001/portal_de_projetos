@@ -30,6 +30,33 @@ module.exports = class UsuarioMiddleware {
         next();
     }
 
+    // Alterar e excluir conta exige que o ID da URL seja o mesmo do token.
+    validateOwnAccount = (request, response, next) => {
+        const idToken = request.usuarioAutenticado?.idUsuario;
+        if (!Number.isInteger(idToken) || idToken <= 0) {
+            throw new ErrorResponse(401, "Faça login novamente.");
+        }
+        if (Number(request.params.idUsuario) !== idToken) {
+            throw new ErrorResponse(403, "Você só pode alterar sua própria conta.");
+        }
+        next();
+    }
+
+    // Uma nova senha é opcional durante a edição do perfil.
+    validateUpdateBody = (request, response, next) => {
+        const usuario = request.body?.usuario;
+        if (!usuario || typeof usuario !== "object" ||
+            typeof usuario.nomeUsuario !== "string" || !usuario.nomeUsuario.trim() ||
+            typeof usuario.email !== "string" || !usuario.email.trim()) {
+            throw new ErrorResponse(400, "Preencha nome e e-mail para atualizar.");
+        }
+        if (usuario.senha !== undefined &&
+            (typeof usuario.senha !== "string" || !usuario.senha)) {
+            throw new ErrorResponse(400, "A nova senha não pode ser vazia.");
+        }
+        next();
+    }
+
     validateLoginBody = (request, response, next) => {
         console.log("UsuarioMiddleware.validateLoginBody()");
         const body = request.body;
