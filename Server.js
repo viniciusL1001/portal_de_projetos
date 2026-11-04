@@ -17,10 +17,12 @@ const ComentarioMiddleware = require("./api/middleware/ComentarioMiddleware");
 
 const UsuarioController = require("./api/controllers/UsuarioController");
 const ProjetoController = require("./api/controllers/ProjetoController");
+const ImagemController = require("./api/controllers/ImagemController");
 const ComentarioController = require("./api/controllers/ComentarioController");
 
 const UsuarioService = require("./api/services/UsuarioService");
 const ProjetoService = require("./api/services/ProjetoService");
+const ImagemService = require("./api/services/ImagemService");
 const ComentarioService = require("./api/services/ComentarioService");
 
 const UsuarioDAO = require("./api/dao/UsuarioDAO");
@@ -115,11 +117,14 @@ module.exports = class Server {
         this.#projetoService = new ProjetoService(this.#projetoDAO, this.#usuarioDAO);
 
         this.#projetoController = new ProjetoController(this.#projetoService);
+        const imagemController = new ImagemController(new ImagemService());
 
         this.#projetoRouter = new ProjetoRouter(
             express.Router(),
             this.#projetoMiddleware,
-            this.#projetoController
+            this.#projetoController,
+            this.#jwtMiddleware,
+            imagemController
         );
 
         this.#app.use("/api/projetos", this.#projetoRouter.createRoutes());
@@ -152,6 +157,13 @@ module.exports = class Server {
 
     setupErrorMiddleware = () => {
         this.#app.use((error, request, response, next) => {
+            if (error.type === "entity.too.large") {
+                return response.status(413).json({
+                    success: false,
+                    message: "Imagem muito grande.",
+                    error: { message: "Selecione uma imagem menor que 2 MB." }
+                });
+            }
             if (error instanceof ErrorResponse) {
                 return response.status(error.httpCode).json({
                     success: false,
