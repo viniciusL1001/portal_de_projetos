@@ -14,12 +14,18 @@ module.exports = class ComentarioService {
         this.#usuarioDAO = usuarioDAOInstance;
     }
 
-    createService = async (jsonComentario) => {
+    createService = async (jsonComentario, idAutenticado) => {
+        if (!Number.isInteger(idAutenticado) || idAutenticado <= 0) {
+            throw new ErrorResponse(401, "Faça login novamente.");
+        }
+        if (Number(jsonComentario.usuario?.idUsuario) !== idAutenticado) {
+            throw new ErrorResponse(403, "Você só pode comentar usando a sua própria conta.");
+        }
         const objProjeto = new Projeto();
         objProjeto.idProjeto = jsonComentario.projeto.idProjeto;
 
         const objUsuario = new Usuario();
-        objUsuario.idUsuario = jsonComentario.usuario.idUsuario;
+        objUsuario.idUsuario = idAutenticado;
 
         const objComentario = new Comentario();
         objComentario.projeto = objProjeto;
@@ -49,7 +55,7 @@ module.exports = class ComentarioService {
         return await this.#comentarioDAO.create(objComentario);
     }
 
-    updateService = async (idComentario, requestBody) => {
+    updateService = async (idComentario, requestBody, idAutenticado) => {
         const comentarioExistente = await this.#comentarioDAO.findById(idComentario);
 
         if (!comentarioExistente) {
@@ -58,6 +64,9 @@ module.exports = class ComentarioService {
                 "Comentario não encontrado.",
                 { message: `Não existe comentário com o id ${idComentario}.` }
             );
+        }
+        if (Number(comentarioExistente.idUsuario) !== idAutenticado) {
+            throw new ErrorResponse(403, "Somente o autor pode atualizar este comentário.");
         }
 
         const objComentario = new Comentario();
@@ -68,13 +77,20 @@ module.exports = class ComentarioService {
 
         objComentario.texto = requestBody.texto;
 
-        return await this.#comentarioDAO.update(objComentario);
+        return await this.#comentarioDAO.update(objComentario, idAutenticado);
     }
 
-    deleteService = async (idComentario) => {
+    deleteService = async (idComentario, idAutenticado) => {
+        const existente = await this.#comentarioDAO.findById(idComentario);
+        if (!existente) {
+            throw new ErrorResponse(404, "Comentário não encontrado.");
+        }
+        if (Number(existente.idUsuario) !== idAutenticado) {
+            throw new ErrorResponse(403, "Somente o autor pode excluir este comentário.");
+        }
         const objComentario = new Comentario();
         objComentario.idComentario = idComentario;
-        return await this.#comentarioDAO.delete(objComentario);
+        return await this.#comentarioDAO.delete(objComentario, idAutenticado);
     }
 
     findAllService = async () => {
