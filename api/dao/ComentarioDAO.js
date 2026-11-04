@@ -26,13 +26,14 @@ module.exports = class ComentarioDAO {
         return resultado.insertId;
     }
 
-    update = async (objComentario) => {
-        const SQL = `UPDATE comentario SET nota = ?, texto = ? WHERE idComentario = ?;`;
+    update = async (objComentario, idAutenticado) => {
+        const SQL = `UPDATE comentario SET nota = ?, texto = ? WHERE idComentario = ? AND idUsuario = ?;`;
         
         const params = [
             objComentario.nota,
             objComentario.texto,
             objComentario.idComentario,
+            idAutenticado
         ];
 
         const pool = await this.#database.getPool();
@@ -41,11 +42,12 @@ module.exports = class ComentarioDAO {
         return resultado.affectedRows > 0;
     }
 
-    delete = async (objComentario) => {
-        const SQL = `DELETE FROM comentario WHERE idComentario = ?;`;
+    delete = async (objComentario, idAutenticado) => {
+        const SQL = `DELETE FROM comentario WHERE idComentario = ? AND idUsuario = ?;`;
 
         const params = [
-            objComentario.idComentario
+            objComentario.idComentario,
+            idAutenticado
         ];  
 
         const pool = await this.#database.getPool();
