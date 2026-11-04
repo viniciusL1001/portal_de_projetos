@@ -76,6 +76,19 @@ module.exports = class UsuarioController {
         }
     }
 
+    me = async (request, response, next) => {
+        try {
+            const idUsuario = request.usuarioAutenticado?.idUsuario;
+            const usuario = await this.#usuarioService.findByIdService(idUsuario);
+            response.status(200).json({
+                success: true,
+                data: { usuario }
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     show = async (request, response, next) => {
         try {
             const idUsuario = request.params.idUsuario;
