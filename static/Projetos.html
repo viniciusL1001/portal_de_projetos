@@ -64,6 +64,31 @@
 
         let projetos = [];
         let projetoExpandido = null;
+        let urlPrevia = null;
+
+        function mostrarPrevia(caminho, arquivo = null) {
+            if (urlPrevia) URL.revokeObjectURL(urlPrevia);
+            urlPrevia = null;
+            const previa = $("previaImagem");
+            if (arquivo) {
+                urlPrevia = URL.createObjectURL(arquivo);
+                previa.src = urlPrevia;
+            } else if (caminho) {
+                previa.src = caminho;
+            } else {
+                previa.removeAttribute("src");
+            }
+            previa.hidden = !arquivo && !caminho;
+        }
+
+        $("arquivoImagem").addEventListener("change", () => {
+            const arquivo = $("arquivoImagem").files[0];
+            if (arquivo && (!["image/png", "image/jpeg"].includes(arquivo.type) || arquivo.size > 2 * 1024 * 1024)) {
+                $("arquivoImagem").value = "";
+                mensagem("Escolha PNG ou JPG de até 2 MB.", true);
+            }
+            mostrarPrevia($("txtImagem").value.trim(), $("arquivoImagem").files[0]);
+        });
 
         function mensagem(texto, erro = false) {
             mostrarMensagem($("divResposta"), texto, erro);
